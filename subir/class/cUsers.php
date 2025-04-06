@@ -4,7 +4,7 @@
 	class CUsers {
 		var $dbc;
 		
-		public $domain="webempleo.urdinspain.com";
+		public $domain="localhost";
 		public $id=0;
 		public $email="";
 		public $rol="";

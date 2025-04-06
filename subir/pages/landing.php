@@ -268,7 +268,7 @@ defined('_EmpleoWeb_') or die('Restricted access');
 	 
 		<!-- Site footer -->
 		<div class="footer">
-			<p>&copy;2013 Valorismo.es</p>
+			<p>&copy;2025 Valorismo.es</p>
 		</div>
 
     </div> <!-- /container -->
