@@ -258,10 +258,12 @@ defined('_EmpleoWeb_') or die('Restricted access');
 	 
 		<!-- Site footer -->
 		<div class="footer">
-			<p>&copy;2013 Valorismo.es</p>
+			<a href="https://www.linkedin.com/in/fcocarlosbeltran/">
+				<p>&copy;2025 Desarrollador</p>
+			</a>
 		</div>
 
     </div> <!-- /container -->
 
-  </body>
+	</body>
 </html>

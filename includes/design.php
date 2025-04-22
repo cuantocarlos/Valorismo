@@ -175,15 +175,13 @@ if($cusers->rol == 1){
 
 function pie(){
 ?>
-                <div class="footer">
-                    <div class="footer-left">
-                        <span>&copy; 2013. Valorismo.es</span>
-                    </div>
-                    <div class="footer-right">
-                        <span>Powered by: <a href="http://www.valorismo.es">valorismo.es</a></span>
-                    </div>
-                </div><!--footer-->
-                
+                <!-- Site footer -->
+				<div class="footer">
+					<a href="https://www.linkedin.com/in/fcocarlosbeltran/">
+						<p>&copy;2025 Desarrollador</p>
+					</a>
+				</div>
+				
             </div><!--maincontentinner-->
         </div><!--maincontent-->
     </div><!--rightpanel-->

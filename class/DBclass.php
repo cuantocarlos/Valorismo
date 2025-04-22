@@ -10,10 +10,10 @@
  **/
 
 class Database {
-	var $host       =       "localhost";
-	var $name       =       "webempleo";
-	var $user       =       "root";
-	var $pass       =       "";
+	var $host = "localhost";
+	var $name = "webempleo";
+	var $user = "root";
+	var $pass = "";
 	var $linkId;
 	
 
