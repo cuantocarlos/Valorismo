@@ -220,6 +220,7 @@ pie();
 
 
 function showInput($datos, $label, $name, $type = "text", $class="input-large", $simbol = "", $err = Array()){
+	$default = "No hay datos";
 	if(isset($datos[$name])){
 		$default = $datos[$name];
 	}

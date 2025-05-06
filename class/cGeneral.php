@@ -315,10 +315,11 @@ class cGeneral {
 	}
 	
 	function fstr($str)
-	{
-		$str=mysql_real_escape_string(htmlspecialchars(trim($str)));
-		return $str;			
-	}
+		{
+			return $this->dbc->fstr($str);
+		}
+
+
 	
 	function RandomString($length=10,$lc=FALSE,$uc=TRUE,$n=TRUE,$sc=FALSE){
 		$source = "";
@@ -369,25 +370,28 @@ class cGeneral {
 		header("Location: $to");
 		die("No hay mas");
 	}
-	function creardb($name){
-		$enlace = mysql_connect('localhost', 'tuintra', 'peportics');
-		if (!$enlace) {
+	
+	function creardb($name) {
+		// Crear conexión usando mysqli
+		$enlace = new mysqli($this->host, $this->user, $this->pass);
+	
+		// Verificar si la conexión fue exitosa
+		if ($enlace->connect_error) {
 			return "error";
-			//die('No pudo conectarse: ' . mysql_error());
-		}
-		//** CREAR ZONAS PARA ARCHIVOS/data/bddname crear una carpeta con el nombre de la bdd y zona_publica
-		//** Por defecto asignar una plantilla
-		$sql = "CREATE DATABASE $name";
-		if (mysql_query($sql, $enlace)) {
-			return "correcto";
-			//Dar PErmisos al user tuintra
-			$nsql="GRANT SELECT , INSERT , UPDATE , DELETE , CREATE , DROP , INDEX , ALTER , CREATE VIEW , SHOW VIEW , CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON `$name` . * TO 'tuintra'@'%';";
-			mysql_query($nsql, $enlace);
-		} else {
-			return "error";
-			//echo 'Error al crear la base de datos: ' . mysql_error() . "\n";
 		}
 	
+		// Crear la base de datos
+		$sql = "CREATE DATABASE `$name`";
+		if ($enlace->query($sql) === TRUE) {
+			// Asignar permisos al usuario
+			$nsql = "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, EXECUTE ON `$name`.* TO 'tuintra'@'%';";
+			$enlace->query($nsql);
+			$enlace->close();
+			return "correcto";
+		} else {
+			$enlace->close();
+			return "error";
+		}
 	}
 	function getGeneralModules(){
 		$modules = Array(

@@ -264,6 +264,7 @@ if($cusers->rol == 2 && $sedes){
 				<div class="widgetcontent wc1">
 					<form id="form1" class="stdform" method="post" action="miperfil#asedes">
 							<?php
+							
 								showInput($datos[0], "Nombre de la sede", "sede");
 							?>
 							<p class="stdformbutton">
@@ -435,6 +436,7 @@ if(isset($_POST["guardarpass"])){
 pie();
 
 function showInput($datos, $label, $name, $type = "text", $class="input-large"){
+	$default = "Valor no encontrado";
 	if(isset($datos[$name])){
 		$default = $datos[$name];
 	}
@@ -457,6 +459,7 @@ function showInput($datos, $label, $name, $type = "text", $class="input-large"){
 }
 
 function showInputT($datos, $label, $name, $type = "text", $class="input-large"){
+	$default = "Valor no encontrado";
 	if(isset($datos[$name])){
 		$default = $datos[$name];
 	}

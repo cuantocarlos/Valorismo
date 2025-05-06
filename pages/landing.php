@@ -20,7 +20,7 @@ defined('_EmpleoWeb_') or die('Restricted access');
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="bootstrap3/js/bootstrap.js"></script>
 	<!-- Custom CSS -->
-	<link href="custom.css" rel="stylesheet">
+	<link href="custom.css" rel="stylesheet" type="text/css">
 	<style>
 	html, body{
 		font-size: 12px;

@@ -25,7 +25,7 @@ $search = new CSearch($sql);
 		<script type="text/javascript" src="js/jquery.tagsinput.min.js"></script>
 
 		<!-- Custom CSS -->
-		<link href="custom.css" rel="stylesheet">
+		<link href="custom.css" rel="stylesheet" type="text/css">
 		<link href="css/datatables.css" rel="stylesheet">
 		<link href="css/jquery.tagsinput.css" rel="stylesheet">
 	</head>

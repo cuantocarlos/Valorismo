@@ -9,287 +9,217 @@
  *  
  **/
 
-class Database {
-	var $host = "localhost";
-	var $name = "webempleo";
-	var $user = "root";
-	var $pass = "";
-	var $linkId;
-	
+class Database
+{
+	private $host = "localhost";
+	private $name = "webempleo";
+	private $user = "root";
+	private $pass = "";
+	private $linkId;
 
-	
-	function getLastID() {
-		$id = mysql_fetch_row(mysql_query("SELECT LAST_INSERT_ID()", $this->linkId));
-		return $id[0];
-	}
-
-	function runSql($query){
-		/*Ejecuta SQL y devuelve cantidad de afectados*/
-		$q_result = mysql_query($query, $this->linkId);
-		return mysql_affected_rows($this->linkId);
-	}
-	function getSql($query, $debug = false){
-		/*Ejecuta SQL y devuelve array*/
-		if($debug)
-			echo $query."<br />";
-		$q_result = mysql_query($query, $this->linkId);
-		if($q_result === FALSE) {
-			//die(mysql_error()); // TODO: better error handling
-			echo mysql_error();
-		}
-		$res=Array();
-				while ($row = mysql_fetch_array($q_result, MYSQL_ASSOC)) {
-					array_push($res,$row);
-				}
-		mysql_free_result($q_result);
-		return $res;
-	}
-	function connect() {
-
-		$this->linkId = mysql_connect($this->host, $this->user, $this->pass);
-
-		if(!$this->linkId) {
-			echo "Error0";
+	function connect()
+	{
+		$this->linkId = new mysqli($this->host, $this->user, $this->pass, $this->name);
+		if ($this->linkId->connect_error) {
+			echo "Error0: " . $this->linkId->connect_error;
 			return false;
 		}
-		if(mysql_select_db($this->name, $this->linkId)) mysql_set_charset('utf8',$this->linkId);return true;
-		mysql_close($this->linkId);
-		echo "Error1";
-		return false;
+		$this->linkId->set_charset("utf8");
+		return true;
 	}
-	function fstr($str){
-		$str=mysql_real_escape_string(htmlspecialchars(trim($str)));
-		return $str;			
+
+	function getLastID()
+	{
+		return $this->linkId->insert_id;
 	}
-	
-	function runSelectBare($query,$single = false,$num=false){
-		$q_result = mysql_query($query, $this->linkId);
-		
-		$res=Array();
-		if($single){
-			//fetch row
-				$res=mysql_fetch_row($q_result);
-				$res=$res[0];
-				
-		}else{
-			//fetch array
-			if($num){
-				while ($row = mysql_fetch_array($q_result, MYSQL_NUM)) {
-					array_push($res,$row);
-				}
-			}else{
-				while ($row = mysql_fetch_array($q_result, MYSQL_ASSOC)) {
-					array_push($res,$row);
-				}
-			}
 
-		}
-		mysql_free_result($q_result);
-		return $res;
-	
+	function runSql($query)
+	{
+		$this->linkId->query($query);
+		return $this->linkId->affected_rows;
 	}
-	function callproc($query){
-		$mysqli = new mysqli($this->host, $this->user, $this->pass, $this->name);
-		if (mysqli_connect_errno()) {
-			printf("Connect failed: %s\n", mysqli_connect_error());
-			exit();
+
+	function getSql($query, $debug = false)
+	{
+		if ($debug) echo $query . "<br />";
+		$result = $this->linkId->query($query);
+		if ($result === false) {
+			echo $this->linkId->error;
+			return [];
 		}
-		$mysqli->set_charset("utf8");
-		$res=Array();
-		if ($result = $mysqli->query($query)) {
-
-			/* fetch object array */
-			while($row = $result->fetch_assoc()) {
-			  $res[]=$row;
-			}
-
-			/* free result set */
-			$result->close();
+		$res = [];
+		while ($row = $result->fetch_assoc()) {
+			$res[] = $row;
 		}
-
-		/* close connection */
-		$mysqli->close();
+		$result->free();
 		return $res;
 	}
-	function runSelect($tables, $where = "1", $fieldsA = "*", $order = false, $limit = false, $offset = false, $group = false, $single = false,$num=false,$dep=0) {
-		if(gettype($tables) == "array") {
-			$table = "";
-			foreach($tables as $t) {
-				$table .= $t.", ";
-			}
-			$table = substr($table, 0, -2);
-		} else $table = $tables;
-		if(gettype($fieldsA) == "array") {
-			$fields = "";
-			$keys = array_keys($fieldsA);
 
-			if($keys[0] != '0') {
-				foreach($keys as $key) {
-					$fields .= $key.' AS '.$fieldsA[$key].', ';
-				}
-			} else {
-				foreach($fieldsA as $field) {
-					$fields .= $field.', ';
-				}
-			}
-			$fields = substr($fields, 0, -2);
-			
-		} else $fields = $fieldsA;
-		$query = "SELECT ".$fields." FROM ".$table." WHERE ".$where.
-			($group!==false ? " GROUP BY ".$group : "").
-			($order!== false?" ORDER BY ".$order : "").
-			
-			($limit !== false?" LIMIT ".$limit:"").
-			($offset !== false?" OFFSET ".$offset:"");
-			
-		if($dep==1){
-			echo $query."<br />";
-		}
-		
-		$q_result = mysql_query($query, $this->linkId);
-		
-		
-		if (!$q_result && 1==2) { // add this check.
-			die('Invalid query: ' . mysql_error());
-		}
-		
-		
-		$res=Array();
-		if($single){
-			//fetch row
-				$res=mysql_fetch_row($q_result);
-				$res=$res[0];
-				
-		}else{
-			//fetch array
-			if($num){
-				while ($row = mysql_fetch_array($q_result, MYSQL_NUM)) {
-					array_push($res,$row);
-				}
-			}else{
-				while ($row = mysql_fetch_array($q_result, MYSQL_ASSOC)) {
-					array_push($res,$row);
-				}
-			}
+	function fstr($str)
+	{
+		return $this->linkId->real_escape_string(htmlspecialchars(trim($str)));
+	}
 
+	function runSelectBare($query, $single = false, $num = false)
+	{
+		$result = $this->linkId->query($query);
+		$res = [];
+
+		if ($single) {
+			$row = $result->fetch_row();
+			$res = $row[0];
+		} else {
+			while ($row = $num ? $result->fetch_row() : $result->fetch_assoc()) {
+				$res[] = $row;
+			}
 		}
-		mysql_free_result($q_result);
+		$result->free();
 		return $res;
 	}
-	
-function mysqli_clean_connection()
-{
-while(mysqli_more_results($this->linkId))
-{
-if(mysqli_next_result($this->linkId))
-{
-$result = mysqli_use_result($this->linkId);
-mysql_free_result($this->linkId);
-}
-}
-} 	
-	function runUpdate($table, $valuesA, $where = "1", $ver = 0) {
-		if(gettype($valuesA) == "array") {
+
+	function runSelect($tables, $where = "1", $fieldsA = "*", $order = false, $limit = false, $offset = false, $group = false, $single = false, $num = false, $dep = 0)
+	{
+		$table = is_array($tables) ? implode(", ", $tables) : $tables;
+		if (is_array($fieldsA)) {
 			$fields = "";
-			$values = "";
-			$keys = array_keys($valuesA);
-			foreach($keys as $key) {
-				if($valuesA[$key] !== NULL || $valuesA[$key]==='NOW()')
-					$values .= "`".$key."`='".str_replace("'",'\'', $valuesA[$key])."',";
-				else
-					$values .= $key."=".$valuesA[$key].",";
-				
+			foreach ($fieldsA as $key => $val) {
+				$fields .= is_string($key) ? "$key AS $val, " : "$val, ";
 			}
-			$fields = substr($fields, 0, -1);
-			$values = substr($values, 0, -1);
-		} else $values = $valuesA;
-		$query = "UPDATE ".$table." SET ".$values." WHERE ".$where;
-		if($ver == 1) echo "$query;<br />";
-		if(mysql_query($query, 
-				$this->linkId))
-			return mysql_affected_rows($this->linkId);
-		return false;
-	}
-	
-	function runDelete($table, $where = "1") {
-		if(mysql_query("DELETE FROM ".$table." WHERE ".$where, $this->linkId))
-			return mysql_affected_rows($this->linkId);
-		//echo "DELETE FROM ".$table." WHERE ".$where;
-		return false;
-	}
-	
-	function runInsert($table, $valuesA, $onDuplicate = NULL, $see = 0, $run = true, $cosa = 1) {
-		if(gettype($valuesA) == "array") {
-			$fields = "";
-			$values = "";
-			$keys = array_keys($valuesA);
-			foreach($keys as $key) {
-				$fields .= "`".$key."`, ";
-				
-				$values .= ($valuesA[$key]===NULL || $valuesA[$key]==='NOW()' || $valuesA[$key]==='UUID()' ?"".$valuesA[$key].", ":"'".str_replace("'", '\'', $valuesA[$key])."', ");
-			}
-			$fields = substr($fields, 0, -2);
-			$values = substr($values, 0, -2);
+			$fields = rtrim($fields, ", ");
+		} else {
+			$fields = $fieldsA;
 		}
-		
+
+		$query = "SELECT $fields FROM $table WHERE $where" .
+			($group ? " GROUP BY $group" : "") .
+			($order ? " ORDER BY $order" : "") .
+			($limit ? " LIMIT $limit" : "") .
+			($offset ? " OFFSET $offset" : "");
+
+		if ($dep == 1) echo $query . "<br />";
+
+		$result = $this->linkId->query($query);
+		if (!$result) return [];
+
+		$res = [];
+		if ($single) {
+			$row = $result->fetch_row();
+			$res = $row[0];
+		} else {
+			while ($row = $num ? $result->fetch_row() : $result->fetch_assoc()) {
+				$res[] = $row;
+			}
+		}
+		$result->free();
+		return $res;
+	}
+
+	function callproc($query)
+	{
+		$res = [];
+		$this->linkId->multi_query($query);
+		do {
+			if ($result = $this->linkId->store_result()) {
+				while ($row = $result->fetch_assoc()) {
+					$res[] = $row;
+				}
+				$result->free();
+			}
+		} while ($this->linkId->more_results() && $this->linkId->next_result());
+		return $res;
+	}
+
+	function runUpdate($table, $valuesA, $where = "1", $ver = 0)
+	{
+		$set = [];
+		foreach ($valuesA as $key => $value) {
+			$set[] = "`$key`=" . ($value === NULL || $value === 'NOW()' ? $value : "'" . str_replace("'", "\'", $value) . "'");
+		}
+		$query = "UPDATE $table SET " . implode(", ", $set) . " WHERE $where";
+		if ($ver == 1) echo "$query;<br />";
+		$this->linkId->query($query);
+		return $this->linkId->affected_rows;
+	}
+
+	function runDelete($table, $where = "1")
+	{
+		$this->linkId->query("DELETE FROM $table WHERE $where");
+		return $this->linkId->affected_rows;
+	}
+
+	function runInsert($table, $valuesA, $onDuplicate = NULL, $see = 0, $run = true, $cosa = 1)
+	{
+		$fields = "";
+		$values = "";
+		foreach ($valuesA as $key => $val) {
+			$fields .= "`$key`, ";
+			$values .= ($val === NULL || $val === 'NOW()' || $val === 'UUID()') ? "$val, " : "'" . str_replace("'", "\'", $val) . "', ";
+		}
+		$fields = rtrim($fields, ", ");
+		$values = rtrim($values, ", ");
+
 		$onDup = "";
-		if($onDuplicate != NULL) {
+		if ($onDuplicate !== NULL) {
 			$onDup = " ON DUPLICATE KEY UPDATE ";
-			if(gettype($onDuplicate) == "array") {
-				$keys = array_keys($onDuplicate);
-				foreach($keys as $key) {
-					$onDup .= '`'.$key.'`='.($onDuplicate[$key]===NULL?"NULL,":"'".str_replace("'", '\'', $onDuplicate[$key])."', ");
+			if (is_array($onDuplicate)) {
+				$parts = [];
+				foreach ($onDuplicate as $key => $val) {
+					$parts[] = "`$key`=" . ($val === NULL ? "NULL" : "'" . str_replace("'", "\'", $val) . "'");
 				}
-				$onDup = substr($onDup, 0, -2);
-			} else $onDup .= $onDuplicate;
+				$onDup .= implode(", ", $parts);
+			} else {
+				$onDup .= $onDuplicate;
+			}
 		}
-		$query = "INSERT INTO ".$table.($fields!==NULL?"(".$fields.")":"").
-			" VALUES (".$values.")".$onDup;
-		if($see == 1){
-			echo $query;
-		}
-		if($run){
-			if(mysql_query($query, $this->linkId)) 
-				return mysql_affected_rows($this->linkId);
-			return false;
-		}else{
-			$var = "";
-			if($cosa == 0) $var = "INSERT INTO ".$table.($fields!==NULL?"(".$fields.")":"")." VALUES <br />";
-			return $var."(".$values."),<br />";
+
+		$query = "INSERT INTO $table ($fields) VALUES ($values)$onDup";
+		if ($see == 1) echo $query;
+		if ($run) {
+			$this->linkId->query($query);
+			return $this->linkId->affected_rows;
+		} else {
+			$var = $cosa == 0 ? "INSERT INTO $table ($fields) VALUES <br />" : "";
+			return $var . "($values),<br />";
 		}
 	}
-	
-	function getCells($table){
-		$query = "SHOW COLUMNS FROM `".$table."`";
-		$fields = mysql_query($query, $this->linkId) or die('hej');
-		return $fields;
+
+	function getCells($table)
+	{
+		$query = "SHOW COLUMNS FROM `$table`";
+		return $this->linkId->query($query);
 	}
-	
-	function translateCellName($cellName){
-		$sql = $this->runSelect("mysql_cell_translation","mysql_name = '".$cellName."'");
-		$row = mysql_fetch_assoc($sql);
-		return $row['human_name']?$row['human_name']:'<span class="faded">['.$cellName.']</span>';
+
+	function translateCellName($cellName)
+	{
+		$sql = $this->runSelect("mysql_cell_translation", "mysql_name = '" . $this->fstr($cellName) . "'");
+		return isset($sql[0]['human_name']) ? $sql[0]['human_name'] : '<span class="faded">[' . $cellName . ']</span>';
 	}
-	
-	function getError() {
-		return mysql_error($this->linkId);
+
+	function getError()
+	{
+		return $this->linkId->error;
 	}
-	
+
 	function close()
 	{
-		mysql_close($this->linkId);
+		$this->linkId->close();
 	}
-	function mensaje($mensaje, $tipo = "success"){
-		?><br /><div class='<?php echo $tipo; ?> msg'><p><?php echo $mensaje; ?></p></div><?php
+
+	function mensaje($mensaje, $tipo = "success")
+	{
+		echo "<br /><div class='$tipo msg'><p>$mensaje</p></div>";
 	}
-	function logaction($userid,$action)
-		{
-			$action=$this->fstr($action);
-			$toins=Array("user_id" => $userid ,"ip" => $_SERVER['REMOTE_ADDR'],"action" => $action,"fecha" => "NOW()");
-			$this->runInsert("logs", $toins, NULL);
-			
-			return true;
-			
-		}
+
+	function logaction($userid, $action)
+	{
+		$action = $this->fstr($action);
+		$data = [
+			"user_id" => $userid,
+			"ip" => $_SERVER['REMOTE_ADDR'],
+			"action" => $action,
+			"fecha" => "NOW()"
+		];
+		$this->runInsert("logs", $data);
+		return true;
+	}
 }
-?>

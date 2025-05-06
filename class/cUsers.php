@@ -16,7 +16,9 @@
 		public $id_perfil=0;
 		
 		function CUsers($_sql) {
-			$this->dbc = $_sql;
+			$this->dbc = new Database();
+			$this->dbc->connect(); // Establece la conexión a la base de datos
+			$this->dbc = $_sql; // Asigna el objeto de base de datos pasado como parámetro
 			$this->buildfrom();
 		}
 
@@ -131,7 +133,7 @@
 
 		function islogued($idxx,$token,$username)
 		{
-			$cwhere="id = '" . mysql_real_escape_string($idxx) . "' AND token = '" . mysql_real_escape_string($token) . "'";
+			$cwhere = "id = '" . $this->fstr($idxx) . "' AND token = '" . $this->fstr($token) . "'";
 			$results=$this->dbc->runSelect("users", $cwhere, "*",false, 1, false,false,false,false);
 			//print_r($results);
 			if($results) { 
@@ -151,9 +153,9 @@
 
 		function fstr($str)
 		{
-			$str=mysql_real_escape_string(htmlspecialchars(trim($str)));
-			return $str;			
+			return $this->dbc->fstr($str);
 		}
+
 			
 		function showColegios($gene, $url = ""){
 			$coles = $this->dbc->runSelect("colegios_login", "id_login = '".$this->id."'", "id_colegio");
