@@ -32,11 +32,18 @@ window.addEventListener('DOMContentLoaded', () => {
         const nombreEmpresa = inputs[4].value;
         const CIF = inputs[5].value;
 
-              //Logica de cálculo
-        const baseImponible = (totalVentas * 100) / (100 + IVA);//1
-        const importeIVA = (baseImponible * IVA ) / 100;//2
-        const valorEmpresarial = baseImponible - importeIVA;//3
-        const valorSocial = (importeIVA*100)/3 //4
+        //Logica de cálculo
+        const uno = (totalVentas * 100) / (100 + IVA);
+        const dos = costeAnualTrabajador * nTrabajadores;
+        const tres = uno - dos;
+        const cuatro = dos * 100 / tres;
+
+
+
+
+
+        const d1 = (uno * IVA) / 100;
+
 
 
         const facturaActualHTML = `
@@ -50,11 +57,11 @@ window.addEventListener('DOMContentLoaded', () => {
                     </td>
                 </tr>
                 <tr><td>Concepto</td><td>Importe</td></tr>
-                <tr><td>Ventas</td><td>${formatoMoneda(totalVentas)} €</td></tr>
+                <tr><td>Ventas</td><td>${formatoMoneda(uno)} €</td></tr>
                 
                 <tr style="height: 40px;"><td colspan="2"></td></tr>
-                <tr><td>Base Imponible</td><td>${formatoMoneda(baseImponible)} €</td></tr>
-                <tr><td>IVA (${IVA}%)</td><td>${formatoMoneda(importeIVA)} €</td></tr>
+                <tr><td>Base Imponible</td><td>${formatoMoneda(uno)} €</td></tr>
+                <tr><td>IVA (${IVA}%)</td><td>${formatoMoneda(d1)} €</td></tr>
                 <tr><td>Total de las ventas</td><td>${formatoMoneda(totalVentas)} €</td></tr>
             </table>
         `;
@@ -64,13 +71,14 @@ window.addEventListener('DOMContentLoaded', () => {
             <table border="1">
                 <tr><td colspan="2"><h3>Factura NUEVA</h3></td></tr>
                 <tr><td>Concepto</td><td>Importe</td></tr>
-                <tr><td>Ventas</td><td>${formatoMoneda(totalVentas)} €</td></tr>
-                <tr><td>Valor Empresarial</td><td>${formatoMoneda(valorEmpresarial)}</td></tr>
-                <tr><td>Valor Social</td><td>${formatoMoneda(valorSocial)}</td></tr>
+                <tr><td>Ventas</td><td>${formatoMoneda(uno)} €</td></tr>
+                <tr><td>Valor Empresarial</td><td>${formatoMoneda(tres)}</td></tr>
                 
                 <tr style="height: 40px;"><td colspan="2"></td></tr>
-                <tr><td>Base Imponible</td><td>${formatoMoneda(baseImponible)} €</td></tr>
-                <tr><td>IVA (${IVA}%)</td><td>${formatoMoneda(importeIVA)} €</td></tr>
+                <tr><td>Valor Social</td><td>${formatoMoneda(dos)}</td></tr>
+
+                <tr><td>Base Imponible</td><td>${formatoMoneda(uno)} €</td></tr>
+                <tr><td>IVA (${IVA}%)</td><td>${formatoMoneda(d1)} €</td></tr>
                 <tr><td>Total de las ventas</td><td>${formatoMoneda(totalVentas)} €</td></tr>
             </table>
         `;
