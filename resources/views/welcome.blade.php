@@ -66,6 +66,20 @@
         <tr><td>Total de las ventas</td><td id="totalVentasNueva"></td></tr>
     </table>
 </div>
+<div id="facturaNuevaModificada">
+    <h2>Factura NUEVA MODIFICADA</h2>
+    <p>Aplicando los Ajustes necesarios en el IVA y en el valor social obtenemos una factura que no aumente el total o lo haga de forma mínima para no encarecer el producto y no perjudicar al consumidor aumentamos el valor social… Del 26,26 % al 19,26 % disminuimos el IVA tres puntos del 21 al 18%</p>
+    <table border="1">
+        <tr><td colspan="2"><h3>Factura NUEVA MODIFICADA</h3></td></tr>
+        <tr><td>Concepto</td><td>Importe</td></tr>
+        <tr><td>Ventas</td><td id="ventasNuevaModificada"></td></tr>
+        <tr><td>Valor Empresarial</td><td id="valorEmpresarialModificado"></td></tr>
+        <tr style="height: 40px;"><td colspan="2"></td></tr>
+        <tr><td>Valor Social</td><td id="valorSocialModificado"></td></tr>
+        <tr><td>Base Imponible</td><td id="baseImponibleNuevaModificada"></td></tr>
+        <tr><td>IVA (<span id="ivaRateNuevaModificada"></span>%)</td><td id="ivaNuevaModificada"></td></tr>
+        <tr><td>Total de las ventas</td><td id="totalVentasNuevaModificada"></td></tr>
+</div>
 
     <script src="valorismo.js" defer></script>
 

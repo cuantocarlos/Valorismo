@@ -86,6 +86,15 @@ window.addEventListener('DOMContentLoaded', () => {
         facturaNueva.iva.textContent = `${formatoMoneda(d1)} €`;
         facturaNueva.totalVentas.textContent = `${formatoMoneda(totalVentas)} €`;
         
+        // Actualizar factura nueva moodificada
+        facturaNueva.ventas.textContent = `${formatoMoneda(uno)} €`;
+        facturaNueva.valorEmpresarial.textContent = `${formatoMoneda(tres)} €`;
+        facturaNueva.valorSocial.textContent = `${formatoMoneda(dos)} €`;
+        facturaNueva.baseImponible.textContent = `${formatoMoneda(uno)} €`;
+        facturaNueva.ivaRate.textContent = IVA;
+        facturaNueva.iva.textContent = `${formatoMoneda(d1)} €`;
+        facturaNueva.totalVentas.textContent = `${formatoMoneda(totalVentas)} €`;
+
         // Mostrar facturas
         document.getElementById('facturaActual').style.display = 'block';
         document.getElementById('facturaNueva').style.display = 'block';
