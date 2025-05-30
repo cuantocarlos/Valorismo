@@ -8,6 +8,12 @@ window.addEventListener('DOMContentLoaded', () => {
         nombreEmpresa: document.getElementById('nombreEmpresa'),
         CIF: document.getElementById('CIF')
     };
+
+    //campos editables
+    const camposEditables = {
+        valorSocialNM: document.getElementById('valorSocialNM'),
+        ivaRateNM: document.getElementById('ivaRateNM'),
+    }
     
     // Elementos de la factura actual
     const facturaActual = {
@@ -30,6 +36,19 @@ window.addEventListener('DOMContentLoaded', () => {
         iva: document.getElementById('ivaNueva'),
         totalVentas: document.getElementById('totalVentasNueva')
     };
+
+    // Elementos de la factura nueva modificada
+    const facturaNM = {
+        ventas: document.getElementById('ventasNM'),
+        valorEmpresarial: document.getElementById('valorEmpresarialModificado'),
+        valorSocial: document.getElementById('valorSocialModificado'),
+        baseImponible: document.getElementById('baseImponibleNM'),
+        ivaRate: document.getElementById('ivaRateNM'),
+        iva: document.getElementById('ivaNM'),
+        totalVentas: document.getElementById('totalVentasNM')
+        //cojo del texto de la factura nueva modificada el valor social y el nuevo IVA
+
+    };
     
     function calcularYMostrarFacturas() {
         // Verificar que todos los campos requeridos tienen valor
@@ -51,10 +70,19 @@ window.addEventListener('DOMContentLoaded', () => {
         
         // Calcular valores una sola vez
         const uno = (totalVentas * 100) / (100 + IVA);
+        const d1 = (uno * IVA) / 100;
         const dos = costeAnualTrabajador * nTrabajadores;
         const tres = uno - dos;
         const cuatro = dos * 100 / tres;
-        const d1 = (uno * IVA) / 100;
+        const cinco = camposEditables.valorSocialNM.value ? parseFloat(camposEditables.valorSocialNM.value) : cuatro;
+        const seis = tres*cinco / 100;
+        const siete =  seis /costeAnualTrabajador;
+        const ocho = siete - nTrabajadores;
+        const nueve = ocho * 100 / nTrabajadores;
+        const diez = camposEditables.ivaRateNM.value ? parseFloat(camposEditables.ivaRateNM.value) : IVA;
+        const once = (tres + seis) * diez / 100;
+        const doce = tres + seis + once;
+
         
         // Actualizar factura actual
         if (nombreEmpresa) {
@@ -86,23 +114,25 @@ window.addEventListener('DOMContentLoaded', () => {
         facturaNueva.iva.textContent = `${formatoMoneda(d1)} €`;
         facturaNueva.totalVentas.textContent = `${formatoMoneda(totalVentas)} €`;
         
-        // Actualizar factura nueva moodificada
-        facturaNueva.ventas.textContent = `${formatoMoneda(uno)} €`;
-        facturaNueva.valorEmpresarial.textContent = `${formatoMoneda(tres)} €`;
-        facturaNueva.valorSocial.textContent = `${formatoMoneda(dos)} €`;
-        facturaNueva.baseImponible.textContent = `${formatoMoneda(uno)} €`;
-        facturaNueva.ivaRate.textContent = IVA;
-        facturaNueva.iva.textContent = `${formatoMoneda(d1)} €`;
-        facturaNueva.totalVentas.textContent = `${formatoMoneda(totalVentas)} €`;
+        // Actualizar factura nueva modificada
+        facturaNM.ventas.textContent = `${formatoMoneda(uno)} €`;
+        facturaNM.valorEmpresarial.textContent = `${formatoMoneda(tres)} €`;
+        facturaNM.valorSocial.textContent = `${formatoMoneda(cinco)} €`;
+        facturaNM.baseImponible.textContent = `${formatoMoneda(uno)} €`;
+        facturaNM.ivaRate.textContent = IVA;
+        facturaNM.iva.textContent = `${formatoMoneda(d1)} €`;
+        facturaNM.totalVentas.textContent = `${formatoMoneda(totalVentas)} €`;
 
         // Mostrar facturas
         document.getElementById('facturaActual').style.display = 'block';
         document.getElementById('facturaNueva').style.display = 'block';
+        document.getElementById('facturaNM').style.display = 'block';
     }
     
     function ocultarFacturas() {
         document.getElementById('facturaActual').style.display = 'none';
         document.getElementById('facturaNueva').style.display = 'none';
+        document.getElementById('facturaNM').style.display = 'none';
     }
 
     // Añadir listeners a los inputs - ahora sin debounce

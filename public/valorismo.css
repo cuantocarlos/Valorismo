@@ -31,3 +31,24 @@ input[type="submit"] {
 input[type="submit"]:hover {
     background-color: #45a049;
 }
+.editable-field {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    padding: 0;
+    margin: 0;
+    
+}
+
+.editable-field:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+}
+
+.editable-field:focus {
+    background-color: rgba(0, 123, 255, 0.1);
+    border-radius: 2px;
+}
